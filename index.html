@@ -1,15 +1,24 @@
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vite + TS</title>
-  </head>
-  <body>
-    <div id="app">
-      <h1>TypeScript Sandbox</h1>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Juego de Memoria</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="contenedor-principal">
+        <h1>🎮 Juego de Memoria 🧠</h1>
+        <div class="estadisticas">
+            <div id="contador-intentos">Intentos: 0</div>
+        </div>
+        <div id="tablero" class="grid-container"></div>
+        <button id="inicio">🎮 Nueva Partida</button>
     </div>
-    <script type="module" src="/src/main.ts"></script>
-  </body>
+    <div id="notificaciones">
+        <div class="toast" id="toast-carta-volteada"></div>
+    </div>
+    <script type="module" src="src/main.ts"></script>
+</body>
 </html>
