@@ -3,7 +3,7 @@ import {
     iniciaPartida, 
     sePuedeVoltearLaCarta, 
     voltearLaCarta, 
-    sonPareja, // <-- Importación correctamente referenciada
+    sonPareja, 
     parejaEncontrada, 
     parejaNoEncontrada,
     esPartidaCompleta
@@ -25,7 +25,7 @@ const actualizarInterfaz = (tablero: Tablero) => {
 
   const actualizarTablero = (nuevoTablero: Tablero): void => {
     tablero = nuevoTablero;
-    actualizarInterfaz(tablero); // Actualiza tanto cartas como contador
+    actualizarInterfaz(tablero); 
   };
 
 
@@ -60,53 +60,85 @@ const renderizarCartas = (): void => {
     });
   };;
 
-  const manejarClickCarta = async (indice: number): Promise<void> => {
+  const manejarAnimacionClick = (elementoCarta: Element, callback: () => void): void => {
+    elementoCarta.classList.add('click-animation');
+    setTimeout(() => {
+      elementoCarta.classList.remove('click-animation');
+      callback();
+    }, 300);
+  };
+  
+  const procesarSegundaCarta = (nuevoTablero: Tablero, callback: (esPareja: boolean) => void): void => {
+    setTimeout(() => {
+      if (nuevoTablero.indiceCartaVolteadaA === undefined || 
+          nuevoTablero.indiceCartaVolteadaB === undefined) return;
+  
+      const esPareja = sonPareja(
+        nuevoTablero.indiceCartaVolteadaA,
+        nuevoTablero.indiceCartaVolteadaB,
+        nuevoTablero
+      );
+      
+      callback(esPareja);
+    }, 1000);
+  };
+  
+  const manejarResultadoPareja = (tableroActual: Tablero, esPareja: boolean): void => {
+    const tableroActualizado = esPareja 
+      ? parejaEncontrada(tableroActual) 
+      : parejaNoEncontrada(tableroActual);
+  
+    actualizarTablero(tableroActualizado);
+  
+    if (esPartidaCompleta(tableroActualizado)) {
+      mostrarMensajeVictoria();
+    }
+  };
+  
+  const mostrarMensajeVictoria = (): void => {
+    const mensaje = document.getElementById("mensaje-victoria");
+    if (mensaje) {
+      mensaje.classList.remove("mensaje-oculto");
+    }
+    
+    const botonCerrar = document.getElementById("cerrar-mensaje");
+    if (botonCerrar) {
+      botonCerrar.onclick = () => {
+        if (mensaje) {
+          mensaje.classList.add("mensaje-oculto");
+        }
+      };
+    }
+  };
+  
+  const manejarClickCarta = (indice: number): void => {
     const elementoCarta = document.querySelector(`[data-indice="${indice}"]`);
     
     if (!elementoCarta || !sePuedeVoltearLaCarta(tablero, indice)) return;
   
-    // Aplicar animación
-    elementoCarta.classList.add('click-animation');
-    await new Promise(resolve => setTimeout(resolve, 300));
-    elementoCarta.classList.remove('click-animation');
+    manejarAnimacionClick(elementoCarta, () => {
+      const nuevoTablero = voltearLaCarta(tablero, indice);
+      actualizarTablero(nuevoTablero);
   
-    // Resto de la lógica...
-    const nuevoTablero = voltearLaCarta(tablero, indice);
-    actualizarTablero(nuevoTablero);
-
-    if (nuevoTablero.estadoPartida === "DosCartasLevantadas") {
-        // Usamos await dentro de una función async
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        
-        if (nuevoTablero.indiceCartaVolteadaA === undefined || 
-            nuevoTablero.indiceCartaVolteadaB === undefined) return;
-
-        // Corregimos el nombre de la variable para evitar conflicto
-        const esPareja = sonPareja(
-            nuevoTablero.indiceCartaVolteadaA,
-            nuevoTablero.indiceCartaVolteadaB,
-            nuevoTablero
-        );
-
-        const tableroActualizado = esPareja 
-            ? parejaEncontrada(nuevoTablero) 
-            : parejaNoEncontrada(nuevoTablero);
-
-        actualizarTablero(tableroActualizado);
-
-        if (esPartidaCompleta(tableroActualizado)) {
-            alert("¡Has ganado!");
-        }
-    }
-};
-
-export const inicializarJuego = () => {
+      if (nuevoTablero.estadoPartida === "DosCartasLevantadas") {
+        procesarSegundaCarta(nuevoTablero, (esPareja) => {
+          manejarResultadoPareja(nuevoTablero, esPareja);
+        });
+      }
+    });
+  };
+  
+  export const inicializarJuego = () => {
     const botonInicio = document.getElementById("inicio");
     if (botonInicio) {
-        botonInicio.addEventListener("click", () => {
-            actualizarTablero(iniciaPartida());
-        });
+      botonInicio.addEventListener("click", () => {
+        actualizarTablero(iniciaPartida());
+      });
     }
     renderizarCartas();
-};
-
+    const mensaje = document.getElementById("mensaje-victoria");
+    if (mensaje) {
+      mensaje.classList.add("mensaje-oculto");
+    }
+  };
+  

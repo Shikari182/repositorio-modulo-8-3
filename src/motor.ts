@@ -19,7 +19,6 @@ export const voltearLaCarta = (tablero: Tablero, indice: number): Tablero => {
   let indiceA = tablero.indiceCartaVolteadaA;
   let indiceB = tablero.indiceCartaVolteadaB;
 
-  // Lógica de estados actualizada
   switch (tablero.estadoPartida) {
     case "CeroCartasLevantadas":
       indiceA = indice;
@@ -47,16 +46,15 @@ export const sonPareja = (indiceA: number, indiceB: number, tablero: Tablero): b
 export const parejaEncontrada = (tablero: Tablero): Tablero => {
   const nuevasCartas = [...tablero.cartas];
   if (tablero.indiceCartaVolteadaA !== undefined && tablero.indiceCartaVolteadaB !== undefined) {
-    // Mantener cartas volteadas y marcarlas como encontradas
     nuevasCartas[tablero.indiceCartaVolteadaA] = {
       ...nuevasCartas[tablero.indiceCartaVolteadaA],
       encontrada: true,
-      estaVuelta: true // <-- ¡Este es el cambio clave!
+      estaVuelta: true 
     };
     nuevasCartas[tablero.indiceCartaVolteadaB] = {
       ...nuevasCartas[tablero.indiceCartaVolteadaB],
       encontrada: true,
-      estaVuelta: true // <-- ¡Y aquí también!
+      estaVuelta: true 
     };
   }
   

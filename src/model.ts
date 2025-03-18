@@ -25,7 +25,7 @@ export const crearColeccionCartas = (): Carta[] => {
     .map(carta => ({
       idFoto: carta.idFoto,
       imagen: carta.imagen,
-      estaVuelta: false, // <- Esto es crítico
+      estaVuelta: false, 
       encontrada: false
     }))
     .sort(() => Math.random() - 0.5);
